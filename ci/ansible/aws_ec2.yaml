@@ -1,0 +1,9 @@
+# Example using filters, ignoring permission errors, and specifying the hostname precedence
+plugin: aws_ec2
+regions:
+  - us-east-1
+aws_access_key: AKIAWCAVPYPK4OBHG52K
+aws_secret_key: SeQeRuqcOOKpnv1YN7qX5D5auE7BDkDY+LPc8QZy
+filters:
+  # All instances with their `Environment` tag set to `dev`
+  tag:Name: jenkins

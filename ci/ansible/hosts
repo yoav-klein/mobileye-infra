@@ -1,2 +1,0 @@
-[server]
-ec2-3-239-195-88.compute-1.amazonaws.com ansible_user=ubuntu

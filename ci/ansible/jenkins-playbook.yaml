@@ -1,7 +1,8 @@
 ---
 - name: install Docker
-  hosts: server
+  hosts: aws_ec2
   become: true
+  remote_user: ubuntu
   tasks:
     - name: Install apt-transport-https
       ansible.builtin.apt:
@@ -23,6 +24,9 @@
         repo: "deb [arch={{ ansible_architecture }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
         state: present
         filename: docker
+    - name: Create docker network
+      community.docker.docker_network:
+          name: jenkins
 
     - name: Install Docker
       ansible.builtin.apt:
@@ -33,8 +37,76 @@
           - docker-registry
         state: latest
         update_cache: true
+
     - name: Add user to docker group
       ansible.builtin.user:
-           name: "{{ ansible_user_id }}"
+           name: ubuntu
            append: true
            groups: ["docker"]
+      notify: 
+      - Restart machine
+    
+    - name: Create network for Jenkins container
+      community.docker.docker_network:
+          name: jenkins
+
+    - name: Run DIND container
+      community.docker.docker_container:
+          name: dind
+          image: docker:dind
+          networks:
+              - name: jenkins
+                aliases: ["docker"]
+          auto_remove: true
+          detach: true
+          privileged: true
+          env:
+              DOCKER_TLS_CERTDIR: /certs
+          volumes:
+              - jenkins-docker-certs:/certs/client
+              - jenkins-data:/var/jenkins_home
+          ports:
+              - 2376:2376
+          command: "--storage-driver overlay2"
+    
+    - name: Create directory for Dockerfile
+      ansible.builtin.file:
+          path: /tmp/docker
+          state: directory
+    
+    - name: Copy Dockerfile
+      ansible.builtin.copy:
+          src: Dockerfile
+          dest: /tmp/docker
+
+    - name: Build Jenkins docker image
+      ansible.builtin.docker_image:
+          build:
+              path: /tmp/docker
+          name: jenkins
+          tag: latest
+          source: build
+
+    - name: Run Jenkins container
+      community.docker.docker_container:
+        name: jenkins
+        image: jenkins:latest
+        networks:
+         - name: jenkins
+        env:
+            DOCKER_HOST=tcp://docker:2376
+            DOCKER_TLS_VERIFY=1
+            DOCKER_CERT_PATH=/certs/client
+        ports:
+            - 80:8080
+            - 50000:50000
+        volumes:
+            - jenkins-docker-certs:/certs/client
+            - jenkins-data:/var/jenkins_home
+        
+
+  handlers:
+      - name: Restart machine
+        ansible.builtin.reboot:
+
+
