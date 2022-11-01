@@ -91,7 +91,7 @@ resource "aws_instance" "ec2_instance" {
   user_data = <<-EOF
 #!/bin/bash
 echo "ECS_CLUSTER=${var.ecs_cluster_name}" >> /etc/ecs/ecs.config
-
+echo "ECS_IMAGE_PULL_BEHAVIOR=always" >> /etc/ecs/ecs.config
 EOF
 
   tags = {
