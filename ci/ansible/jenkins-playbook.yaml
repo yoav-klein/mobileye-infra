@@ -40,10 +40,12 @@
            name: ubuntu
            append: true
            groups: ["docker"]
-   
-    - name: Restart machine
-      ansible.builtin.reboot:
-    
+      notify:
+          - Restart machine
+  
+    - name: Flush handlers # restart now
+      meta: flush_handlers
+
     - name: Create network for Jenkins container
       community.docker.docker_network:
           name: jenkins
@@ -101,7 +103,21 @@
         volumes:
             - jenkins-docker-certs:/certs/client
             - jenkins-data:/var/jenkins_home
-        
+    - name: Pause for 5 minutes to build app cache
+      ansible.builtin.pause:
+        seconds: 60
+      
+    - name: Retrieve Jenkins password
+      community.docker.docker_container_exec:
+          command: cat /var/jenkins_home/secrets/initialAdminPassword
+          container: jenkins
+      register: jenkins_password
 
-
-
+    - name: Print Jenkins password
+      ansible.builtin.debug:
+          msg: "{{ jenkins_password.stdout }}"
+          
+  handlers:
+   - name: Restart machine
+     ansible.builtin.reboot:
+    
