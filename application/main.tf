@@ -32,6 +32,7 @@ module "ecs" {
 module "ec2" {
   source           = "./ec2"
   ecs_cluster_name = module.ecs.ecs_cluster_name
+  pub_key_path = "${path.root}/key.pub"
 }
 
 module "alb" {
