@@ -23,6 +23,7 @@ instance on which the Jenkins server will run.
 ## Usage
 
 _Prerequisites_
+
 First, you must export the authentication environment variables:
 ```
 export AWS_ACCESS_KEY_ID=<ACCESS_KEY>
