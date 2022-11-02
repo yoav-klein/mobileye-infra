@@ -42,7 +42,7 @@ data "aws_availability_zones" "available" {
 
 resource "aws_key_pair" "deployer" {
   key_name   = "myKey"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDyFizoH/zu75qix7Z56+PuBBEUMYnPzBTLPL2hjimx3c9qeU+S/+SC1R9m/tpYeTZnY8LYc3tZzXmIWOhQoAx557zBnC21KD20waI+AvR2hI5lIgV9T7krSEV0NQ36drmZUvBeEuF3p4bRK5ywZei59UqkkIcMReyl0ZHX7fuqMapOiXanjzivigstLqtwus+xR16KhpKQx34azSk+S4lb2uK/KT4um1wENTDSyey1EPUM3phSXa39qY3zgwbT/sSWInXguAfvI4r9/xsLd04seUviQEhWwJ5EnAzMjhhc/xvEuWauKTicaY7Hgq/OdhNEc7Tua8qFgJsgRTW5tMWUELYQn26JwSVoN9WFVNSUUATzV50G21ykwx6MbYkxZvQWUs5Zq5KP+Gr/h0g3a/gU6hBxu+XsOT2AhIs6UGbm8JMNfc1HKR0/WbBM+bjsebFVkB6hk/1avbDU61XZ458wLSkUpvjxGiYl67Bld2lbDaPzFzcv5VTNyNbwZe9Zunk= yoav@yoav-VirtualBox"
+  public_key = file(var.pub_key_path)
 }
 
 # ecsInstanceRole
@@ -84,7 +84,7 @@ resource "aws_instance" "ec2_instance" {
   ami                  = "ami-03dbf0c122cb6cf1d" # Amazon Linux AMI
   iam_instance_profile = aws_iam_instance_profile.instance_profile.name
   key_name             = aws_key_pair.deployer.key_name
-  instance_type        = "t2.small"
+  instance_type        = "t2.medium"
   security_groups      = [aws_security_group.sg.name]
 
 
