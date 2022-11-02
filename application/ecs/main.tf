@@ -46,6 +46,8 @@ resource "aws_ecs_service" "ecs_service" {
   task_definition = aws_ecs_task_definition.app.arn
   desired_count   = 1
   launch_type     = "EC2"
+  deployment_maximum_percent = 300
+  deployment_minimum_healthy_percent = 0
   load_balancer {
     target_group_arn = var.target_group_arn
     container_name   = local.container_name
