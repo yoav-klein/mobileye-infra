@@ -14,15 +14,16 @@ to run the application. This includes:
 1. Application Load Balancer
 2. ECR repository
 3. ECS cluster + service
-4. EC2 instance on which the ECS will run tasks
+4. 2 EC2 instances on which the ECS will run tasks
 
 ### CI
+
 This directory holds Terraform and Ansible code to provision and configure the EC2
 instance on which the Jenkins server will run.
 
 ## Usage
 
-_Prerequisites_
+#### Prerequisites
 
 First, you must export the authentication environment variables:
 ```
@@ -46,7 +47,7 @@ $ ssh-keygen -t rsa -f key
 
 This will output 2 important details:
 1. The DNS name of the load balancer for the application. Save it for later use.
-2. The repository URL of our ECR repository. Save it also for later use.
+2. The URL of our ECR repository. Save it also for later use.
 
 ### CI
 
@@ -68,16 +69,18 @@ will output the `initialAdminPassword` - Save it.
 
 3. Configure Jenkins. 
 a. Browse to our Jenkins instance using the DNS name from step 1. 
-b. Enter the initialAdminPassword from step 2. 
+
+b. Enter the initialAdminPassword from step 2.
+
 c. Install the recommended plugins and create a user.
-d. We need credentials for our pipeline to push images to the ECR repository. Run:
-```
-$ aws ecr get-login-password
-```
-And save the output
-e. Create a credential in the Credentials Manager of type Username and Password, and call it `ecr_login`.
-For username, enter "AWS", and for password, the output from step d.
-f. Create a pipeline, and configure it to use the repository URL: `https://github.com/yoav-klein/mobileye-application`
+
+d. Configure credentials to our AWS account for the pipeline to use.
+
+* Go to the Credentials Store in Jenkins
+* Add a new credential of type AWS Credentials, with ID `aws_account`
+* Fill in the Access Key ID and Secret Key.
+
+e. Create a pipeline, and configure it to use the repository URL: `https://github.com/yoav-klein/mobileye-application`
 
 We'll need to edit the registry URL in the Jenkinsfile, which is in this other repository. Further details
 there.
