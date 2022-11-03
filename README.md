@@ -86,5 +86,10 @@ We'll need to edit the registry URL in the Jenkinsfile, which is in this other r
 there.
 
 
+## Known Issues
+
+1. It is considered a best practice to use the `awsvpc` network mode. But for some reason, using EC2 launch type
+with the `awsvpc` didn't work. See https://stackoverflow.com/questions/74255478/how-to-run-ecs-task-on-ec2-with-awsvpc
+So currently we use the Bridge network mode.
 
 
