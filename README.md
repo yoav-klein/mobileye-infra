@@ -14,7 +14,7 @@ to run the application. This includes:
 1. Application Load Balancer
 2. ECR repository
 3. ECS cluster + service
-4. 2 EC2 instances on which the ECS will run tasks
+4. 2 EC2 instances on which the ECS will run tasks (didn't use Fargate in order to utilize free tier)
 
 ### CI
 
