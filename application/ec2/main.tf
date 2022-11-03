@@ -80,6 +80,7 @@ resource "aws_iam_instance_profile" "instance_profile" {
 
 
 resource "aws_instance" "ec2_instance" {
+  count = 2
   availability_zone    = data.aws_availability_zones.available.names[0]
   ami                  = "ami-03dbf0c122cb6cf1d" # Amazon Linux AMI
   iam_instance_profile = aws_iam_instance_profile.instance_profile.name
