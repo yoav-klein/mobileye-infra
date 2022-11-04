@@ -85,7 +85,7 @@ resource "aws_instance" "ec2_instance" {
   ami                  = "ami-03dbf0c122cb6cf1d" # Amazon Linux AMI
   iam_instance_profile = aws_iam_instance_profile.instance_profile.name
   key_name             = aws_key_pair.deployer.key_name
-  instance_type        = "t2.medium"
+  instance_type        = "t2.micro"
   security_groups      = [aws_security_group.sg.name]
 
 
